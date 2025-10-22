@@ -6,7 +6,7 @@ IDE Used: Visual Studio Code
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <list>
+#include <set>
 #include "Goat.h"
 using namespace std;
 
@@ -15,10 +15,10 @@ const int IGNORE_STREAM_CHARS = 100;                        //Number of characte
 
 enum Choice { ADD = 1, DELETE = 2, DISPLAY = 3, QUIT = 4 }; //Use enum for options for readability
 
-int select_goat(list<Goat> &trip);
-void delete_goat(list<Goat> &trip);
-void add_goat(list<Goat> &trip, string names[], string colors[]);
-void display_trip(list<Goat>& trip);
+int select_goat(set<Goat> &trip);
+void delete_goat(set<Goat> &trip);
+void add_goat(set<Goat> &trip, string names[], string colors[]);
+void display_trip(set<Goat>& trip);
 Choice main_menu();
 void coutline(int size = 30, char fill = '=');
 
@@ -38,7 +38,7 @@ int main() {
     while (fin1 >> colors[i++]);
     fin1.close();
 
-    list<Goat> goats;
+    set<Goat> goats;
     Choice choice;
     
     //Call menu function until user quits
@@ -79,15 +79,15 @@ void coutline(int size, char fill) {
 
 /**
  * Prompts user to select a goat and deletes selected goat
- * @param trip List of goats
+ * @param trip Set of goats
  */
-void delete_goat(list<Goat> &trip) {
-    if (trip.empty()) { cout << "No goats to delete." << endl; return; }//exit if there are no goats in the list
+void delete_goat(set<Goat> &trip) {
+    if (trip.empty()) { cout << "No goats to delete." << endl; return; }//exit if there are no goats in the set
 
     int index;
-    list<Goat>::iterator it = trip.begin();                             //instantiate iterator at beginning to locate goat
+    set<Goat>::iterator it = trip.begin();                              //instantiate iterator at beginning to locate goat
 
-    cout << "Select a goat to delete from list." << endl;
+    cout << "Select a goat to delete from set." << endl;
     index = select_goat(trip) - 1;                                      //select_trip returns goat number; need to subtract one to obtain a valid index
 
     for(int i = 0; i < index; i++, it++);                               //Increment iterator to the chosen goat
@@ -99,10 +99,10 @@ void delete_goat(list<Goat> &trip) {
 /**
  * Displays goats and queries a goat number. Validates input
  * @note Returned number starts from 1
- * @param trip List of goats to select from
+ * @param trip Set of goats to select from
  * @return Selected goat number. Ranges from 1 to the number of goats.
  */
-int select_goat(list<Goat> &trip) {
+int select_goat(set<Goat> &trip) {
     int choice;
     display_trip(trip);
 
@@ -125,29 +125,30 @@ int select_goat(list<Goat> &trip) {
 }
 
 /**
- * Adds a new goat to a list of goats.
+ * Adds a new goat to a set of goats.
  * Goat is given a random name and color out of the given arrays.
- * @param trip List of goats to add a new goat to
+ * @param trip Set of goats to add a new goat to
  * @param names Name is chosen out of this array of names
  * @param colors Color is chosen out of this array of colors
  */
-void add_goat(list<Goat> &trip, string names[], string colors[]) {
+void add_goat(set<Goat> &trip, string names[], string colors[]) {
+    int initialSize = trip.size();
     //select random name, color, age
     string name     = names[rand() % SZ_NAMES];
     string color    = colors[rand() % SZ_COLORS];
     int    age      = 1 + rand() % MAX_AGE;
 
-    //add goat to end of list
-    trip.push_back(Goat(name, age, color));
+    //add goat to end of set; repeat add until a new unique goat is added
+    do { trip.emplace(name, age, color); } while(trip.size() == initialSize);
 
-    cout << "Added " << trip.back().get_name() << "!" << endl;
+    cout << "Added " << name << "!" << endl;
 }
 
 /**
- * Displays goat data given a list of goats
- * @param trip List of goats to display
+ * Displays goat data given a set of goats
+ * @param trip Set of goats to display
  */
-void display_trip(list<Goat>& trip) {
+void display_trip(set<Goat>& trip) {
     if (trip.empty()) { cout << "No goats to display." << endl; return; }
 
     coutline();

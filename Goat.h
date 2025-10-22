@@ -26,6 +26,15 @@ public:
     string get_color() const        { return color; }
 
     // write overloaded < operator for the std::list
+    bool operator<(const Goat& otherGoat) const {
+        if (otherGoat.name == name) {
+            if (otherGoat.age == age) {
+                return color < otherGoat.color;
+            }
+            return age < otherGoat.age;
+        }
+        return name < otherGoat.name;
+    }
 };
 
 #endif
