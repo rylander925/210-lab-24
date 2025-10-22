@@ -61,7 +61,6 @@ int main() {
                 display_trip(goats);
                 break;
         }
-
         coutline();
     }
     return 0;
@@ -138,7 +137,7 @@ void add_goat(set<Goat> &trip, string names[], string colors[]) {
     string color    = colors[rand() % SZ_COLORS];
     int    age      = 1 + rand() % MAX_AGE;
 
-    //add goat to end of set; repeat add until a new unique goat is added
+    //attempt to insert a goat to the set; repeat insert until a new unique goat is added
     do { trip.emplace(name, age, color); } while(trip.size() == initialSize);
 
     cout << "Added " << name << "!" << endl;
